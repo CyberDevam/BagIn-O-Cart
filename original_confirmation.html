@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation - BagIn-O-Cart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary: #2a2a72;
+      --secondary: #ffa502;
+      --light: #f7f7f7;
+      --dark: #2f3542;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light);
+      color: #333;
+    }
+    
+    .navbar {
+      background: linear-gradient(135deg, var(--primary), #4b4b9d);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .confirmation-header {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 5rem 0;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    
+    .confirmation-icon {
+      font-size: 5rem;
+      color: var(--secondary);
+      margin-bottom: 2rem;
+    }
+    
+    .confirmation-card {
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .order-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .btn-continue {
+      background-color: var(--primary);
+      border: none;
+      font-weight: 600;
+      padding: 0.75rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="original_index.html">BagIn-O-Cart</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="original.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="original_cart.html">Cart</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="original_wishlist.html">Wishlist</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="original_order_history.html">My Orders</a>
+          </li>
+        </ul>
+        <div class="ms-3">
+          <a href="original_cart.html" class="btn btn-outline-light position-relative">
+            <i class="bi bi-cart3"></i> Cart
+            <span id="cartProd" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="confirmation-header">
+    <div class="container">
+      <div class="confirmation-icon">
+        <i class="bi bi-check-circle"></i>
+      </div>
+      <h1 class="display-4 fw-bold mb-3">Order Confirmed!</h1>
+      <p class="lead">Thank you for your purchase</p>
+    </div>
+  </section>
+
+  <section class="confirmation-content py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="confirmation-card">
+            <h4 class="mb-4">Order Details</h4>
+            
+            <div id="orderDetails">
+              <!-- Order details will be inserted here -->
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="d-flex justify-content-between mb-2">
+              <span>Subtotal</span>
+              <span id="subtotal">₹0.00</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Shipping</span>
+              <span>₹99.00</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Tax</span>
+              <span id="tax">₹0.00</span>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="d-flex justify-content-between mb-4">
+              <h5>Total</h5>
+              <h5 id="total">₹99.00</h5>
+            </div>
+            
+            <a href="index.html" class="btn btn-continue">Continue Shopping</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Get order data from localStorage
+    const order = JSON.parse(localStorage.getItem('currentOrder'));
+    
+    // Update cart count in navbar
+    function updateCartCount() {
+      document.getElementById('cartProd').textContent = '0';
+    }
+    
+    // Render order details
+    function renderOrderDetails() {
+      if (!order) {
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      const container = document.getElementById('orderDetails');
+      
+      // Calculate subtotal and tax
+      const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const tax = subtotal * 0.15;
+      
+      // Update totals
+      document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById('tax').textContent = `₹${tax.toFixed(2)}`;
+      document.getElementById('total').textContent = order.total;
+      
+      // Render order items
+      const itemsHTML = order.items.map(item => `
+        <div class="order-item">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="mb-1">${item.name}</h6>
+              <p class="text-muted mb-0">Quantity: ${item.quantity}</p>
+            </div>
+            <p class="mb-0 fw-bold">₹${(item.price * item.quantity).toFixed(2)}</p>
+          </div>
+        </div>
+      `).join('');
+      
+      // Render shipping info
+      const shippingHTML = `
+        <div class="mb-4">
+          <h5 class="mb-3">Shipping Information</h5>
+          <p class="mb-1">${order.customer.firstName} ${order.customer.lastName}</p>
+          <p class="mb-1">${order.customer.address}</p>
+          <p class="mb-1">${order.customer.city}, ${order.customer.zip}</p>
+          <p class="mb-0">${order.customer.country}</p>
+        </div>
+      `;
+      
+      container.innerHTML = itemsHTML + shippingHTML;
+    }
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCount();
+      renderOrderDetails();
+    });
+
+
+      // Add status to order
+  if (order) {
+    order.status = 'In Process';
+    order.orderId = '#' + Math.floor(Math.random() * 1000000);
+    
+    // Save to order history
+    let orders = JSON.parse(localStorage.getItem('orderHistory')) || [];
+    orders.push(order);
+    localStorage.setItem('orderHistory', JSON.stringify(orders));
+  }
+  </script>
+</body>
+</html>
